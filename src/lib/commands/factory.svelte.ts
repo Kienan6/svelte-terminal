@@ -5,6 +5,7 @@ import type Terminal from '$lib/state/terminal.svelte.js';
 import notFoundCommand from '$lib/commands/not_found.svelte.js';
 import invalidParameterCommand from '$lib/commands/invalid_paramenter.svelte.js';
 import clearCommand from '$lib/commands/clear.svelte.js';
+import changeDirectoryCommand from '$lib/commands/change_directory.svelte.js';
 
 type ParsedCommand = {
 	alias: string;
@@ -14,7 +15,8 @@ type ParsedCommand = {
 //command name -> command
 const commandMap: Record<string, Command> = {
 	test: testCommand,
-	clear: clearCommand
+	clear: clearCommand,
+	changeDirectory: changeDirectoryCommand
 };
 
 //runtime generation of alias -> command name

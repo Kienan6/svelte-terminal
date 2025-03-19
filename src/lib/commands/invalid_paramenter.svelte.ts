@@ -1,14 +1,8 @@
 import type Terminal from '$lib/state/terminal.svelte.js';
-import type { Command, Parameter, TerminalOutput } from '$lib/types.js';
-import { formatOutput } from '$lib/commands/helpers.js';
+import type { Command, Parameter } from '$lib/types.js';
 
 function invalidParameterCommandFn(state: Terminal, parameters: Parameter[]) {
-	const output: TerminalOutput = {
-		output: formatOutput(state.current.value, 'Invalid Parameter ' + parameters[0].name),
-		path: state.current.path
-	};
-
-	state.pushHistory(output);
+	state.createMessage('Invalid Parameter ' + parameters[0].name);
 }
 
 const invalidParameterCommand = {

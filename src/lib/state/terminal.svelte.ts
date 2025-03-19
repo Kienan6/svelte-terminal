@@ -1,4 +1,5 @@
 import type { TerminalCurrentState, TerminalOutput } from '$lib/types.js';
+import { formatOutput } from '$lib/commands/helpers.js';
 
 // Singleton
 class Terminal {
@@ -49,6 +50,15 @@ class Terminal {
 	pushHistory = (history: TerminalOutput) => {
 		this._current.value = '';
 		this._history.push(history);
+	};
+
+	createMessage = (message: string) => {
+		const output: TerminalOutput = {
+			output: formatOutput(this._current.value, message),
+			path: this._current.path
+		};
+
+		this.pushHistory(output);
 	};
 }
 

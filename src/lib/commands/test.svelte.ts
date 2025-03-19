@@ -1,5 +1,4 @@
-import type { Command, Parameter, TerminalOutput } from '$lib/types.js';
-import { formatOutput } from '$lib/commands/helpers.js';
+import type { Command, Parameter } from '$lib/types.js';
 import type Terminal from '$lib/state/terminal.svelte.js';
 
 function testCommandFn(state: Terminal, parameters: Parameter[]) {
@@ -7,12 +6,7 @@ function testCommandFn(state: Terminal, parameters: Parameter[]) {
 		p += c.name + ' = ' + c.value + '\n';
 		return p;
 	}, '');
-	const output: TerminalOutput = {
-		output: formatOutput(state.current.value, 'Test Command Ran with Params -\n' + paramsAsOutput),
-		path: state.current.path
-	};
-
-	state.pushHistory(output);
+	state.createMessage('Test Command Ran with Params -\n' + paramsAsOutput);
 }
 
 const testCommand = {

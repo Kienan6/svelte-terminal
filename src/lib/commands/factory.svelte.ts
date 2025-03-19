@@ -6,6 +6,7 @@ import notFoundCommand from '$lib/commands/not_found.svelte.js';
 import invalidParameterCommand from '$lib/commands/invalid_paramenter.svelte.js';
 import clearCommand from '$lib/commands/clear.svelte.js';
 import changeDirectoryCommand from '$lib/commands/change_directory.svelte.js';
+import listDirectoryCommand from '$lib/commands/list_directory.svelte.js';
 
 type ParsedCommand = {
 	alias: string;
@@ -16,7 +17,8 @@ type ParsedCommand = {
 const commandMap: Record<string, Command> = {
 	test: testCommand,
 	clear: clearCommand,
-	changeDirectory: changeDirectoryCommand
+	changeDirectory: changeDirectoryCommand,
+	listDirectory: listDirectoryCommand
 };
 
 //runtime generation of alias -> command name
@@ -40,14 +42,25 @@ function getCommandByAlias(alias: string): Command | undefined {
 
 function parseParametersFromLine(params: string[]): Parameter[] {
 	const out: Parameter[] = [];
+	const paramRegex = /--[A-Za-z]+/g;
 	console.log(params);
 
 	//TODO - very simple
 	for (let i = 0; i < params.length; i++) {
-		out.push({
-			name: params[i],
-			value: params[i + 1] ?? 'true' //TODO - this doesnt seem right, but works - thanks js
-		});
+		const param = params[i];
+		const isParam = param.match(paramRegex);
+		if (isParam) {
+			out.push({
+				name: params[i].substring(2),
+				value: params[i + 1] ?? 'true' //TODO - this doesnt seem right, but works - thanks js
+			});
+		} else {
+			//just a value
+			out.push({
+				name: '',
+				value: params[i]
+			});
+		}
 		i++;
 	}
 
@@ -67,6 +80,7 @@ function parseLine(line: string): ParsedCommand | null {
 	};
 }
 
+//TODO - kind of awkward
 export function commandFactory(state: Terminal) {
 	const input = state.current.value;
 	const parsedCommand = parseLine(input);

@@ -1,14 +1,8 @@
 import type Terminal from '$lib/state/terminal.svelte.js';
-import type { Command, Parameter, TerminalOutput } from '$lib/types.js';
-import { formatOutput } from '$lib/commands/helpers.js';
+import type { Command, Parameter } from '$lib/types.js';
 
 function notFoundCommandFn(state: Terminal, parameters: Parameter[]) {
-	const output: TerminalOutput = {
-		output: formatOutput(state.current.value, 'Command Not Found'),
-		path: state.current.path
-	};
-
-	state.pushHistory(output);
+	state.createMessage('Command Not Found');
 }
 
 const notFoundCommand = {

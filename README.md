@@ -4,6 +4,8 @@
 
 ### Svelte library for a simple browser terminal
 
+![img.png](img.png)
+
 ## Features
 
 * ### Custom Commands
@@ -72,7 +74,3 @@ const fileSystemMap: FileSystemInput = {
 
 export const fileSystem = new FileSystem(fileSystemMap);
 ```
-
-* ### Visual Components
-
-![img.png](img.png)

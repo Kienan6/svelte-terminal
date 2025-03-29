@@ -1,18 +1,22 @@
 import Terminal from '$lib/state/terminal.svelte.js';
 import FileSystem, { type FileSystemInput } from '$lib/state/file_system.svelte.js';
+import Commands from '$lib/state/commands.svelte.js';
+import changeDirectoryCommand from '$lib/commands/change_directory.svelte.js';
+import clearCommand from '$lib/commands/clear.svelte.js';
+import listDirectoryCommand from '$lib/commands/list_directory.svelte.js';
+import testCommand from '$lib/commands/test.svelte.js';
+import printCommand from '$lib/commands/print.svelte.js';
 
 const fileSystemMap: FileSystemInput = {
-	root: {
-		file: {
-			contents: 'test',
-			name: 'test'
+	home: {
+		'test.txt': {
+			contents: 'this is a file'
 		},
-		dir1: {
-			dir2: {},
-			dir3: {
-				file2: {
-					contents: 'test2',
-					name: 'test2'
+		projects: {
+			terminal: {},
+			kienan: {
+				'file.txt': {
+					contents: 'wow, another file'
 				}
 			}
 		}
@@ -20,14 +24,16 @@ const fileSystemMap: FileSystemInput = {
 };
 
 export const fileSystem = new FileSystem(fileSystemMap);
-
 export const terminal = new Terminal('Kienan@Terminal', {
 	path: '~',
 	value: ''
 });
-
-// runtime generated map of alias -> command name
-export const aliasMap = $state<{ generated: boolean; map: Record<string, string> }>({
-	generated: false,
-	map: {}
-});
+const allCommands = [
+	changeDirectoryCommand,
+	clearCommand,
+	listDirectoryCommand,
+	testCommand,
+	printCommand
+];
+export const commands = new Commands(terminal);
+commands.addCommands(allCommands);

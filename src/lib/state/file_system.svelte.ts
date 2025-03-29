@@ -1,8 +1,3 @@
-interface IFileType {
-	getContents: () => string;
-	execute: () => void;
-}
-
 type File = {
 	name: string;
 	contents: string;
@@ -11,11 +6,10 @@ type File = {
 };
 
 type FileInput = {
-	name: string;
 	contents: string;
 };
 const isFileInput = (f: object): f is FileInput => 'contents' in f;
-export type FileSystemInput = FileInput | { [key: string]: FileSystemInput };
+export type FileSystemInput = { [key: string]: FileSystemInput | FileInput };
 
 class FileSystem {
 	root: File;
@@ -24,17 +18,16 @@ class FileSystem {
 		if (Object.keys(map).length === 0) {
 			return null;
 		}
-
-		if (isFileInput(map)) {
-			const f: File = {
-				name: map.name,
-				children: [],
-				directory: false,
-				contents: map.contents
-			};
-			node.children?.push(f);
-		} else {
-			for (const key of Object.keys(map)) {
+		for (const key of Object.keys(map)) {
+			if (isFileInput(map[key])) {
+				const f: File = {
+					name: key,
+					children: [],
+					directory: false,
+					contents: map[key].contents
+				};
+				node.children?.push(f);
+			} else {
 				const f: File = {
 					name: key,
 					children: [],
@@ -42,7 +35,7 @@ class FileSystem {
 					contents: ''
 				};
 				node.children?.push(f);
-				this.buildTree(f, (map as { [key: string]: FileSystemInput })[key]);
+				this.buildTree(f, map[key] as FileSystemInput);
 			}
 		}
 	}
@@ -89,7 +82,7 @@ class FileSystem {
 	}
 
 	//absolute path
-	private getFileByPath(path: string): File | null {
+	public getFileByPath(path: string): File | null {
 		if (path === '') {
 			return null;
 		}
@@ -98,7 +91,7 @@ class FileSystem {
 
 	validDirectory(path: string): boolean {
 		const f = this.getFileByPath(path);
-		return f?.directory ?? false;
+		return Boolean(f?.directory);
 	}
 
 	// takes absolute path ie . /root/user/home to a dir
@@ -108,17 +101,6 @@ class FileSystem {
 			return file.children;
 		}
 		return null;
-	}
-
-	print() {
-		//this.printFromNode(this.root);
-		//this.log();
-		const test = this.listFiles('/root/dir1/dir2');
-		console.log(test);
-	}
-
-	private log() {
-		console.log(this.root);
 	}
 }
 

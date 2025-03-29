@@ -1,6 +1,5 @@
-import { commandFactory } from '$lib/commands/factory.svelte.js';
-import { terminal } from '$lib/state.svelte.js';
+import type Commands from '$lib/state/commands.svelte.js';
 
-export function handleEnter() {
-	commandFactory(terminal);
+export function handleEnter(commands: Commands) {
+	commands.run();
 }

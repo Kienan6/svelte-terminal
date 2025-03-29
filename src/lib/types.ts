@@ -8,6 +8,7 @@ export type DefaultProps = {
 
 export type ParameterConfig = {
 	name: string;
+	optional?: boolean;
 };
 
 export type Parameter = {
@@ -24,6 +25,11 @@ export type Command = {
 	description: string;
 	parameters: ParameterConfig[];
 	fn: CommandFunction;
+};
+
+export type ParsedCommand = {
+	alias: string;
+	parameters: Parameter[];
 };
 
 export type TerminalOutput = {

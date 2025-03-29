@@ -3,6 +3,7 @@
 	import type { DefaultProps } from '$lib/types.ts';
 	import { twMerge } from 'tailwind-merge';
 	import { handleEnter } from '$lib/handlers/keys.svelte.js';
+	import { commands } from '$lib/state.svelte.js';
 
 	type Props = DefaultProps & {}
 
@@ -21,7 +22,7 @@
 				break;
 			case 'Enter':
 				e.preventDefault();
-				handleEnter();
+				handleEnter(commands);
 				break;
 			case 'Control':
 				break;

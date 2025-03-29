@@ -1,30 +1,54 @@
-import type { Command, Parameter, TerminalState } from '$lib/types.js';
+import type { Command, Parameter, ParsedCommand } from '$lib/types.js';
+import notFoundCommand from '$lib/commands/not_found.svelte.js';
+import invalidParameterCommand from '$lib/commands/invalid_paramenter.svelte.js';
+import type Terminal from '$lib/state/terminal.svelte.js';
 
-type ParsedCommand = {
-	alias: string;
-	parameters: Parameter[];
+type CommandParameters = {
+	commandDefaults?: {
+		notFound?: Command;
+		invalidParameters?: Command;
+	};
 };
 
 class Commands {
-	commandMap: Record<string, Command> = $state({});
-	terminalState: TerminalState;
+	commands = $state<Command[]>([]);
+	aliasMap = $state<Record<string, string>>({});
+	terminal: Terminal;
+	notFoundCommand: Command;
+	invalidParametersCommand: Command;
 
-	constructor(terminalState: TerminalState) {
-		this.terminalState = terminalState;
+	constructor(terminal: Terminal, parameters?: CommandParameters) {
+		this.terminal = terminal;
+		this.notFoundCommand = parameters?.commandDefaults?.notFound ?? notFoundCommand;
+		this.invalidParametersCommand =
+			parameters?.commandDefaults?.invalidParameters ?? invalidParameterCommand;
 	}
 
-	addCommand(name: string, command: Command) {
-		this.commandMap[name] = command;
+	addCommands(commands: Command[]) {
+		commands.forEach((command) => {
+			this.addCommand(command);
+		});
 	}
 
-	getCommand(name: string) {
-		return this.commandMap[name];
+	addCommand(command: Command) {
+		for (const alias of command.alias) {
+			this.aliasMap[alias] = command.name;
+		}
+		this.commands.push(command);
+	}
+
+	getCommand(name: string): Command | undefined {
+		return this.commands.find((command) => command.name === name);
+	}
+
+	getCommandByAlias(alias: string): Command | undefined {
+		const commandName = this.aliasMap[alias] as string;
+		return this.getCommand(commandName);
 	}
 
 	private parseParametersFromLine(params: string[]): Parameter[] {
 		const out: Parameter[] = [];
 		const paramRegex = /--[A-Za-z]+/g;
-		console.log(params);
 
 		//TODO - very simple
 		for (let i = 0; i < params.length; i++) {
@@ -57,16 +81,14 @@ class Commands {
 
 		return {
 			alias: strs.shift() ?? '',
-			parameters: parseParametersFromLine(strs)
+			parameters: this.parseParametersFromLine(strs)
 		};
 	}
 
 	//TODO - kind of awkward
-	commandFactory() {
-		const input = this.terminalState.current.value;
-		const parsedCommand = parseLine(input);
-
-		console.log(parsedCommand);
+	run() {
+		const input = this.terminal.current.value;
+		const parsedCommand = this.parseLine(input);
 
 		//TODO - standard error
 		if (!parsedCommand) {
@@ -75,19 +97,19 @@ class Commands {
 
 		const params = parsedCommand.parameters;
 		const alias = parsedCommand.alias;
-		const command = getCommandByAlias(alias);
+		const command = this.getCommandByAlias(alias);
 
 		if (!command) {
-			return notFoundCommand.fn(state, []);
+			return this.notFoundCommand.fn(this.terminal, []);
 		}
 		//check parameters against found command parameters
 		for (const param of params) {
 			if (!command.parameters.find((v) => v.name === param.name)) {
-				return invalidParameterCommand.fn(state, [param]);
+				return this.invalidParametersCommand.fn(this.terminal, [param]);
 			}
 		}
 
-		command.fn(state, params);
+		command.fn(this.terminal, params);
 	}
 }
 

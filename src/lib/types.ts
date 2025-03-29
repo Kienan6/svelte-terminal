@@ -33,6 +33,7 @@ export type ParsedCommand = {
 };
 
 export type TerminalOutput = {
+	input: string;
 	output: string;
 	path: string;
 };

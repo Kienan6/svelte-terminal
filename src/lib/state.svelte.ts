@@ -25,7 +25,7 @@ const fileSystemMap: FileSystemInput = {
 
 export const fileSystem = new FileSystem(fileSystemMap);
 export const terminal = new Terminal('Kienan@Terminal', {
-	path: '~',
+	path: '/home',
 	value: ''
 });
 const allCommands = [

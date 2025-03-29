@@ -5,11 +5,12 @@ import { formatOutput } from '$lib/commands/helpers.js';
 class Terminal {
 	static _instance: Terminal;
 	_user: string = $state('');
+	_history: TerminalOutput[] = $state([]);
+	private _history_pointer: number = 0;
 	_current: TerminalCurrentState = $state({
 		path: '',
 		value: ''
 	});
-	_history: TerminalOutput[] = $state([]);
 
 	constructor(user: string, current?: TerminalCurrentState, history?: TerminalOutput[]) {
 		if (Terminal._instance) {
@@ -43,6 +44,27 @@ class Terminal {
 		return this._history;
 	}
 
+	get historyPointer(): number {
+		return this._history_pointer;
+	}
+
+	set historyPointer(val: number) {
+		if (this._history.length >= val && val >= 0) {
+			this._history_pointer = val;
+		}
+		if (this._history_pointer > 0) {
+			this._current = {
+				path: this._current.path,
+				value: this._history[this._history.length - this._history_pointer].input
+			};
+		} else {
+			this._current = {
+				path: this._current.path,
+				value: ''
+			};
+		}
+	}
+
 	setHistory = (history: TerminalOutput[]) => {
 		this._history = history;
 	};
@@ -54,6 +76,7 @@ class Terminal {
 
 	createMessage = (message: string) => {
 		const output: TerminalOutput = {
+			input: this._current.value,
 			output: formatOutput(this._current.value, message),
 			path: this._current.path
 		};

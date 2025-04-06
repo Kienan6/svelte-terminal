@@ -1,6 +1,5 @@
 import type Terminal from '$lib/state/terminal.svelte.js';
 import type { Command, Parameter } from '$lib/types.js';
-import { fileSystem } from '$lib/state.svelte.js';
 import { resolveAbsolutePath } from '$lib/commands/helpers.js';
 
 //TODO - only current dir for now
@@ -11,7 +10,7 @@ function listDirectoryCommandFn(state: Terminal, parameters: Parameter[]) {
 		path = resolveAbsolutePath(path, pathParam);
 	}
 
-	const files = fileSystem.listFiles(path);
+	const files = state.fileSystem.listFiles(path);
 
 	if (files) {
 		const message = files.reduce((p, c) => {

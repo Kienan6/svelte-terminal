@@ -1,6 +1,11 @@
 {
+	"author": {
+		"name": "Kienan O'Brien",
+		"url": "https://kienanobrien.com"
+	},
 	"name": "terminal",
 	"version": "0.0.1",
+	"license": "GPL-3.0",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -29,6 +34,17 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./commands": {
+			"types": "./dist/commands/index.d.ts",
+			"svelte": "./dist/commands/index.js"
+		}
+	},
+	"typesVersions": {
+		">4.0": {
+			"commands": [
+				"./dist/commands/index.d.ts"
+			]
 		}
 	},
 	"peerDependencies": {
@@ -72,7 +88,10 @@
 		"vitest": "^3.0.8"
 	},
 	"keywords": [
-		"svelte"
+		"svelte",
+		"terminal",
+		"bash",
+		"filesystem"
 	],
 	"dependencies": {
 		"tailwind-merge": "^3.0.2"

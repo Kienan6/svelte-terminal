@@ -1,9 +1,11 @@
 import type { TerminalCurrentState, TerminalOutput } from '$lib/types.js';
 import { formatOutput } from '$lib/commands/helpers.js';
+import { FileSystem } from '$lib/index.js';
 
 // Singleton
 class Terminal {
 	static _instance: Terminal;
+	static _file_system: FileSystem;
 	_user: string = $state('');
 	_history: TerminalOutput[] = $state([]);
 	private _history_pointer: number = 0;
@@ -12,16 +14,25 @@ class Terminal {
 		value: ''
 	});
 
-	constructor(user: string, current?: TerminalCurrentState, history?: TerminalOutput[]) {
+	constructor(
+		user: string,
+		file_system: FileSystem,
+		current?: TerminalCurrentState,
+		history?: TerminalOutput[]
+	) {
 		if (Terminal._instance) {
 			console.log('Terminal instance already created');
 			return Terminal._instance;
 		}
 		Terminal._instance = this;
-
+		Terminal._file_system = file_system;
 		this._user = user;
 		this._current = current ?? this._current;
 		this._history = history ?? this._history;
+	}
+
+	get fileSystem(): FileSystem {
+		return Terminal._file_system;
 	}
 
 	get user(): string {

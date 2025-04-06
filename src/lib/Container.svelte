@@ -1,33 +1,37 @@
 <script lang="ts">
 	import type { DefaultProps } from '$lib/types.ts';
 	import { twMerge } from 'tailwind-merge';
-	import { handleEnter } from '$lib/handlers/keys.svelte.js';
-	import { commands, terminal } from '$lib/state.svelte.js';
+	import { handleArrowDown, handleArrowUp, handleEnter } from '$lib/handlers/keys.js';
+	import type Commands from './state/commands.svelte.js';
+	import type Terminal from './state/terminal.svelte.js';
 
-	type Props = DefaultProps & {};
+	type Props = DefaultProps & {
+		commands: Commands;
+		terminal: Terminal;
+	};
 
-	let { class: _class, children }: Props = $props();
+	let { commands, terminal, class: _class, children }: Props = $props();
 
 	function handleKeyDown(e: KeyboardEvent) {
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
-				terminal.historyPointer--;
+				handleArrowDown(terminal);
 				break;
 			case 'ArrowUp':
 				e.preventDefault();
-				terminal.historyPointer++;
+				handleArrowUp(terminal);
 				break;
-			case 'ArrowLeft':
-				break;
-			case 'ArrowRight':
-				break;
+			// case 'ArrowLeft':
+			// 	break;
+			// case 'ArrowRight':
+			// 	break;
 			case 'Enter':
 				e.preventDefault();
-				handleEnter(commands);
+				handleEnter(terminal, commands);
 				break;
-			case 'Control':
-				break;
+			// case 'Control':
+			// 	break;
 			default:
 		}
 	}

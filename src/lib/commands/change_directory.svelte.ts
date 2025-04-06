@@ -1,6 +1,5 @@
 import type Terminal from '$lib/state/terminal.svelte.js';
 import type { Command, Parameter } from '$lib/types.js';
-import { fileSystem } from '$lib/state.svelte.js';
 import { resolveAbsolutePath } from '$lib/commands/helpers.js';
 
 function changeDirectoryCommandFn(state: Terminal, parameters: Parameter[]) {
@@ -9,7 +8,7 @@ function changeDirectoryCommandFn(state: Terminal, parameters: Parameter[]) {
 	}
 	const pathParam = parameters[0].value;
 	const path = resolveAbsolutePath(state.current.path, pathParam);
-	if (fileSystem.validDirectory(path)) {
+	if (state.fileSystem.validDirectory(path)) {
 		state.createMessage('');
 
 		state.setCurrent({

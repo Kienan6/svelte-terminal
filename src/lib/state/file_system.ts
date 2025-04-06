@@ -1,14 +1,14 @@
 type File = {
 	name: string;
-	contents: string;
+	_contents: string;
 	directory: boolean;
 	children: File[];
 };
 
 type FileInput = {
-	contents: string;
+	_contents: string;
 };
-const isFileInput = (f: object): f is FileInput => 'contents' in f;
+const isFileInput = (f: object): f is FileInput => '_contents' in f;
 export type FileSystemInput = { [key: string]: FileSystemInput | FileInput };
 
 class FileSystem {
@@ -24,7 +24,7 @@ class FileSystem {
 					name: key,
 					children: [],
 					directory: false,
-					contents: map[key].contents
+					_contents: map[key]._contents
 				};
 				node.children?.push(f);
 			} else {
@@ -32,7 +32,7 @@ class FileSystem {
 					name: key,
 					children: [],
 					directory: true,
-					contents: ''
+					_contents: ''
 				};
 				node.children?.push(f);
 				this.buildTree(f, map[key] as FileSystemInput);
@@ -43,7 +43,7 @@ class FileSystem {
 	constructor(map: FileSystemInput) {
 		const _root: File = {
 			name: '',
-			contents: '',
+			_contents: '',
 			directory: true,
 			children: []
 		};

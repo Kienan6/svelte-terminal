@@ -3,7 +3,7 @@
 		"name": "Kienan O'Brien",
 		"url": "https://kienanobrien.com"
 	},
-	"name": "terminal",
+	"name": "svelte-terminal",
 	"version": "0.0.1",
 	"license": "GPL-3.0",
 	"scripts": {
